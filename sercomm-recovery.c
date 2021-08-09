@@ -377,7 +377,7 @@ int ReadResp(int s, unsigned char *mac, unsigned int seqno, unsigned int time)
 	  print_pkt(__FUNCTION__, "", ibuf, rc);
 	}
 
-	if (le16toh(hdr.seqno) == seqno) {
+	if (le16toh(hdr.seqno) == seqno % 0x10000) {
 	  rc = ibuf[sizeof(struct hdr_s)] | 
 	    (ibuf[sizeof(struct hdr_s)+1]<<8);
 	  goto end;
