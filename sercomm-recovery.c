@@ -66,7 +66,7 @@
 
 #define PID_MAGIC "sErCoMm"
 #define PID2_MAGIC "seRcOmM"
-#define PID_OFFSET 0xff80
+#define PID_OFFSET 0x1ac7a
 #define PID_MAGIC_LEN 7
 struct pid_s {
   char magic[PID_MAGIC_LEN]; /* PID*_MAGIC */
@@ -526,61 +526,6 @@ int UpdateFW(int s, const char *fw_name, struct hw_info_s *hw)
   memcpy(fw,mm,st.st_size);
   munmap(mm, MAX_FW_SIZE);
 
-#if 0 /* openwrt images currently contain no real cfe, only zeros */
-  /* check that the firmware starts with the boot loader */
-  if (memcmp(fw+CFE_MAGIC_OFFSET, "CFE1CFE1", 8)) {
-    err("invalid firmware file %s - no CFE1CFE1 at offset 0x%x. "
-	"Bootloader missing?", fw_name, CFE_MAGIC_OFFSET);
-    goto end;
-  }
-#endif
-
-  /* check that we have a pid area at offset 0xff80 */
-  memcpy(&pid, fw+PID_OFFSET, sizeof(pid));
-
-  if (memcmp(pid.magic, PID_MAGIC, PID_MAGIC_LEN) ||
-      memcmp(pid.magic2, PID_MAGIC, PID_MAGIC_LEN)) {
-    err("invalid firmware file %s - cannot find pid at offset 0x%x.",
-	fw_name, PID_OFFSET);
-    goto end;
-  }
-
-  /* check that the firmware contains the correct hw id (in the pid) */
-  if (strncmp(hw->pid.hw_id, pid.hw_id, sizeof(pid.hw_id))) {
-    err("invalid firmware file %s - bad hardware id: expected %s, found %s",
-	fw_name, hw->pid.hw_id, pid.hw_id);
-    goto end;
-  }
-
-  /* check that we have a pid or pid2 area at offset >= 0x200000.
-     If not, then fail.
-     If we found a pid area, convert it to a pid2.
-  */
-	
-  for(cptr=fw+MIN_PID2_OFFSET,sec_pid=NULL;
-      cptr < (fw + st.st_size-PID_MAGIC_LEN); cptr++) {
-    if (!memcmp(cptr, PID2_MAGIC, PID_MAGIC_LEN))
-      break;
-    if (cptr < (fw + st.st_size - sizeof(struct pid_s)) &&
-	!memcmp(cptr, PID_MAGIC, PID_MAGIC_LEN) &&
-	!memcmp(cptr+offsetof(struct pid_s,magic2), 
-		PID_MAGIC, PID_MAGIC_LEN)) {
-      sec_pid=cptr;
-    }
-  }
-  if (cptr >= (fw + st.st_size-PID_MAGIC_LEN)) {
-    dbg("no pid2 found");
-    if (sec_pid != NULL) {
-      printf("#INFO converting pid area at offset 0x%lx into a pid2\n",
-	     sec_pid-fw);
-      memcpy(sec_pid, PID2_MAGIC, PID_MAGIC_LEN);
-      memcpy(sec_pid+offsetof(struct pid_s,magic2),
-	     PID2_MAGIC, PID_MAGIC_LEN);
-    } else
-      /* fail if we found neither pid nor pid2 area
-	 at an offset >=0x20000 */
-      goto end;
-  }
 
   /* start updating the firmware */
   seqno=0;
