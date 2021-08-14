@@ -11,10 +11,10 @@ make
 2. Enter Download Mode
 ======================
 
-- power off the device
-- press the reset button
-- power on while holding the reset button
-- wait until the power LED flashes red/green, release the reset button
+ 1. Power off the device
+ 2. Press the RESET or WPS button (this depends on the router model)
+ 3. Power on while holding the button
+ 4. Wait 5 seconds or more until the LEDs blink in a special pattern depending on the router model.
 
 
 3. Run the Tool
@@ -24,8 +24,7 @@ Connect a LAN port to a NIC of the host, e.g. to eth1.
 
 3.1. Probe the Device
 ---------------------
-
-./sercomm eth1
+`./sercomm-recovery eth1`
 
 This should list some info about all device found in download mode.
 
@@ -33,7 +32,7 @@ This should list some info about all device found in download mode.
 3.2. Flash
 ----------
 
-./sercomm eth1 firmware_file
+`./sercomm-recovery eth1 flash_burn.bin`
 
 This probes for devices in download mode. If more than one found, it
 prompts for the one to flash. Afterwards the firmware file is checked
@@ -45,13 +44,17 @@ prompts for the one to flash. Afterwards the firmware file is checked
 
 If anything goes wrong with probing or flashing, please execute the command
 again with "-v", e.g.
-      ./sercomm -v eth1 firmware_file
+
+      `./sercomm-recovery -v eth1 flash_burn.bin`
+
 This adds a lot of debug output to stdout.
 
 
 5. Status
 =========
 
-Currently tested with:
-- Sercomm AD1018
+Currently works with:  
 
+* Sercomm AD1018
+* Sercomm H500-s (untested)
+* Sercomm Vox 2.5 (untested)
