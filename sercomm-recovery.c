@@ -62,7 +62,7 @@
 #define CFE_MAGIC_OFFSET 0x4e0
 
 /* max. size of a firmware file */
-#define MAX_FW_SIZE ((unsigned long int)(132*1024*1024))
+#define MAX_FW_SIZE ((unsigned long int)(528*1024*1024))
 
 #define PID_MAGIC "sErCoMm"
 #define PID2_MAGIC "seRcOmM"
