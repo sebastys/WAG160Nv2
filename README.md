@@ -51,5 +51,5 @@ This adds a lot of debug output to stdout.
 Currently works with:  
 
 * Sercomm AD1018
-* Sercomm H500-s (untested)
+* Sercomm H500-s (untested) tested on Vodafone HW Version v1. It works!
 * Sercomm Vox 2.5 (untested)
